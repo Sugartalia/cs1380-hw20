@@ -1,0 +1,66 @@
+#####
+#...#
+#...#
+#####
+find 1 -> 0
+find 9 -> -1
+after set_cell(1, 2, 1):
+#####
+#.#.#
+#...#
+#####
+set_cell(9, 0, 1) ignored
+#####
+#.#.#
+#...#
+#####
+find_code(nullptr) -> -1
+
+real    0m0.009s
+user    0m0.000s
+sys     0m0.001s
+
+Breakpoint 1, main () at main.c:6
+6       int main(void) {
+(gdb) next
+7           int pic[][COLS] = {
+(gdb) next
+13          int nrows = sizeof(pic) / sizeof(pic[0]);
+(gdb) next
+15          print_picture(pic, nrows);
+(gdb) next
+#####
+#...#
+#...#
+#####
+16          printf("find 1 -> %d\n", find_code(pic, nrows, 1));
+(gdb) next
+find 1 -> 0
+17          printf("find 9 -> %d\n", find_code(pic, nrows, 9));
+(gdb) next
+find 9 -> -1
+19          set_cell(pic, nrows, 1, 2, 1);
+(gdb) next
+20          printf("after set_cell(1, 2, 1):\n");
+(gdb) print pic[1]
+$1 = {1, 0, 1, 0, 1}
+(gdb) print pic[1][0]@5
+$2 = {1, 0, 1, 0, 1}
+(gdb) quit
+
+
+
+QUESTIONS
+1. find_code has to look at every cell because the target might be in the last cell or might not be in the picture at all.
+
+2. COLS is part of the parameter because C needs to know how many columns each row has to access the 2D array correctly. The number of rows is passed separately because different pictures can have different numbers of rows
+
+3. The array stores integer codes, like 0 and 1. The print_picture function decides which character to print for each code. In my program, 0 prints as . and 1 prints as #.
+
+4. If row == nrows, the row is outside the array because the valid row indices go from 0 to nrows - 1. Writing there could cause undefined behavior, so set_cell must ignore it.
+
+5. The flat index of pic[2][3] is 2 * 5 + 3 = 13.
+
+6. The time command measures how long the program takes to run, while stepping through GDB lets me inspect the program while it executes. A 4×5 is too small to give useful information about performance because the program finishes almost immediately.
+
+7. Pushing to the remote saves my commits in the course git repository, while uploading hw20.zip submits the assignment to Canvas. Having both gives me a backup which can be nice!
